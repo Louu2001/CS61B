@@ -3,45 +3,48 @@ package deque;
 public class ArrayDeque<T> implements Deque<T> {
     private T[] items;
     private int size;
-    private int nextFirst;
-    private int nextLast;
+    private int head;
+    private int tail;
+    private static final int DEFAULT_CAPACITY = 8;
 
     @SuppressWarnings("unchecked")
     public ArrayDeque(){
-        items = (T[]) new Object[8];
-        size = 0;
-        nextFirst = 4;
-        nextLast = 5;
-    }
-    public ArrayDeque(T item){
-        items[5] = item;
-        nextFirst=4;
-        nextLast=6;
-        size=1;
+        items = (T[]) new Object[DEFAULT_CAPACITY];
+        head = 0;
+        tail = 1;
+
     }
 
     @Override
     public void addFirst(T item) {
-        items[nextFirst] = item;
-        nextFirst--;
-        if (nextFirst==-1){
-            resize(2*size);
+        if (size== items.length){
+            resize(2*DEFAULT_CAPACITY);
         }
+        items[head] = item;
+        head = (head-1+ items.length)% items.length;
+        size++;
+
     }
 
     @Override
     public void addLast(T item) {
-        items[nextLast] = item;
-        nextLast++;
-        if (nextLast == items.length){
-            resize(2*size);
+        if (size== items.length){
+            resize(2*DEFAULT_CAPACITY);
         }
+        items[tail] = item;
+        tail = (tail+1+ items.length)% items.length;
+        size++;
     }
 
     private void resize(int capacity) {
-        T[] a = (T[]) new Object[capacity];
-        System.arraycopy(items, 0, a, 0, size);
-        items = a;
+        int newCapacity = items.length*2;
+        T[] newArray = (T[]) new Object[newCapacity];
+        for (int i = 0; i < size; i++) {
+            newArray[i] = items[(head+i)% items.length];
+        }
+        items = newArray;
+        head = 0;
+        tail = size;
     }
 
     @Override
@@ -56,21 +59,60 @@ public class ArrayDeque<T> implements Deque<T> {
 
     @Override
     public void printDeque() {
-        ArrayDeque deque = (ArrayDeque) items[nextFirst+1];
+        for (int i = 0; i < size; i++) {
+            int current = (head+1+i+ items.length)% items.length;
+            System.out.println(items[current]+" ");
+        }
+        System.out.println();
     }
 
     @Override
     public T removeFirst() {
-        return null;
+        if (size == 0) {
+            throw new RuntimeException("Deque is empty");
+        }
+        T item = items[head];
+        items[head] =null;
+        head = (head +1)% items.length;
+        size--;
+        return item;
     }
 
     @Override
     public T removeLast() {
-        return null;
+        if (size==0)
+            throw new RuntimeException("Deque is empty");
+        T item = items[tail];
+        items[tail] = null;
+        tail = (tail-1+ items.length)% items.length;
+        size--;
+        return item;
     }
 
     @Override
     public T get(int index) {
-        return null;
+        if (isEmpty()||index<0||index>size){
+            throw new RuntimeException("out of index");
+        }
+        int indexNode = (head+index+ items.length)% items.length;
+        return items[indexNode];
     }
+
+//    public static void main(String[] args) {
+//        ArrayDeque<String> deque = new ArrayDeque<>();
+//
+//        deque.addFirst("A");
+//        deque.addLast("B");
+//        deque.addFirst("C");
+//        deque.addLast("D");
+//
+//        System.out.println("Deque after additions:");
+//        deque.printDeque(); // C A B D
+//
+//        deque.removeFirst();
+//        deque.removeLast();
+//
+//        System.out.println("Deque after removals:");
+//        deque.printDeque(); // A B
+//    }
 }
