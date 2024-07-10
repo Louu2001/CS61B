@@ -37,6 +37,28 @@ public class ArrayDeque<T> implements Deque<T> {
         size++;
     }
 
+    @Override
+    public T removeFirst() {
+        if (isEmpty())
+            return null;
+        T item = items[head];
+        items[head] =null;
+        head = (head +1)% items.length;
+        size--;
+        return item;
+    }
+
+    @Override
+    public T removeLast() {
+        if (isEmpty())
+            return null;
+        tail = (tail-1+ items.length)% items.length;
+        T item = items[tail];
+        items[tail] = null;
+        size--;
+        return item;
+    }
+
     private void resize(int capacity) {
         int newCapacity = items.length*2;
         T[] newArray = (T[]) new Object[newCapacity];
@@ -67,28 +89,6 @@ public class ArrayDeque<T> implements Deque<T> {
         System.out.println();
     }
 
-    @Override
-    public T removeFirst() {
-        if (size == 0) {
-            throw new RuntimeException("Deque is empty");
-        }
-        T item = items[head];
-        items[head] =null;
-        head = (head +1)% items.length;
-        size--;
-        return item;
-    }
-
-    @Override
-    public T removeLast() {
-        if (size==0)
-            throw new RuntimeException("Deque is empty");
-        tail = (tail-1+ items.length)% items.length;
-        T item = items[tail];
-        items[tail] = null;
-        size--;
-        return item;
-    }
 
     @Override
     public T get(int index) {
