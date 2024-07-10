@@ -6,12 +6,13 @@ public class ArrayDeque<T> implements Deque<T> {
     private int head;
     private int tail;
     private static final int DEFAULT_CAPACITY = 8;
+    private static final double MIN_LOAD_FACTOR = 0.25;
 
     @SuppressWarnings("unchecked")
     public ArrayDeque(){
         items = (T[]) new Object[DEFAULT_CAPACITY];
         head = 0;
-        tail = 1;
+        tail = 0;
 
     }
 
@@ -20,8 +21,8 @@ public class ArrayDeque<T> implements Deque<T> {
         if (size== items.length){
             resize(2*DEFAULT_CAPACITY);
         }
-        items[head] = item;
         head = (head-1+ items.length)% items.length;
+        items[head] = item;
         size++;
 
     }
@@ -32,7 +33,7 @@ public class ArrayDeque<T> implements Deque<T> {
             resize(2*DEFAULT_CAPACITY);
         }
         items[tail] = item;
-        tail = (tail+1+ items.length)% items.length;
+        tail = (tail+1)% items.length;
         size++;
     }
 
@@ -60,7 +61,7 @@ public class ArrayDeque<T> implements Deque<T> {
     @Override
     public void printDeque() {
         for (int i = 0; i < size; i++) {
-            int current = (head+1+i+ items.length)% items.length;
+            int current = (head+i+ items.length)% items.length;
             System.out.println(items[current]+" ");
         }
         System.out.println();
@@ -82,9 +83,9 @@ public class ArrayDeque<T> implements Deque<T> {
     public T removeLast() {
         if (size==0)
             throw new RuntimeException("Deque is empty");
+        tail = (tail-1+ items.length)% items.length;
         T item = items[tail];
         items[tail] = null;
-        tail = (tail-1+ items.length)% items.length;
         size--;
         return item;
     }
@@ -108,11 +109,11 @@ public class ArrayDeque<T> implements Deque<T> {
 //
 //        System.out.println("Deque after additions:");
 //        deque.printDeque(); // C A B D
-//
+//        System.out.println(deque.get(2));
 //        deque.removeFirst();
 //        deque.removeLast();
 //
 //        System.out.println("Deque after removals:");
 //        deque.printDeque(); // A B
 //    }
-}
+    }
