@@ -17,18 +17,10 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
     }
 
-    public ArrayDeque(T item) {
-        items = (T[]) new Object[DEFAULT_CAPACITY];
-        head = 7;
-        tail = 0;
-        items[head] = item;
-        size = 1;
-    }
-
     @Override
     public void addFirst(T item) {
         if (size == items.length) {
-            resize(2 * DEFAULT_CAPACITY);
+            resize(2 * items.length);
         }
         head = (head - 1 + items.length) % items.length;
         items[head] = item;
@@ -39,7 +31,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     @Override
     public void addLast(T item) {
         if (size == items.length) {
-            resize(2 * DEFAULT_CAPACITY);
+            resize(2 * items.length);
         }
         items[tail] = item;
         tail = (tail + 1) % items.length;
@@ -48,40 +40,42 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
     @Override
     public T removeFirst() {
-        if (isEmpty())
+        if (isEmpty()) {
             return null;
+        }
         T item = items[head];
         items[head] = null;
         head = (head + 1) % items.length;
         size--;
+        if (items.length >= 16 && size < items.length / 4) {
+            resize(items.length / 4);
+        }
         return item;
     }
 
     @Override
     public T removeLast() {
-        if (isEmpty())
+        if (isEmpty()) {
             return null;
+        }
         tail = (tail - 1 + items.length) % items.length;
         T item = items[tail];
         items[tail] = null;
         size--;
+        if (items.length >= 16 && size < items.length / 4) {
+            resize(items.length / 4);
+        }
         return item;
     }
 
     private void resize(int capacity) {
-        int newCapacity = items.length * 2;
-        T[] newArray = (T[]) new Object[newCapacity];
+        T[] newArray = (T[]) new Object[capacity];
         for (int i = 0; i < size; i++) {
             newArray[i] = items[(head + i) % items.length];
         }
         items = newArray;
         head = 0;
         tail = size;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
     }
 
     @Override
@@ -114,17 +108,21 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     }
 
     private class ArrayDequeIterator implements Iterator<T> {
-        private int current = head;
+        private int index;
+
+        ArrayDequeIterator() {
+            index = 0;
+        }
 
         @Override
         public boolean hasNext() {
-            return current != tail;
+            return index < size;
         }
 
         @Override
         public T next() {
-            T item = items[current];
-            current += 1;
+            T item = get(index);
+            index += 1;
             return item;
         }
     }

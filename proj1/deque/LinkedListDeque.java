@@ -1,10 +1,6 @@
 package deque;
 
-import jh61b.junit.In;
-import net.sf.saxon.tree.iter.ListIterator;
-
 import java.util.Iterator;
-import java.util.LinkedList;
 
 public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 
@@ -13,11 +9,11 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 
 
     public class Node {
-        public Node prev;
-        public T item;
-        public Node next;
+        private Node prev;
+        private T item;
+        private Node next;
 
-        public Node(T item) {
+        private Node(T item) {
             this.item = item;
         }
     }
@@ -64,8 +60,9 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 
 
     public T removeFirst() {
-        if (isEmpty())
+        if (isEmpty()) {
             return null;
+        }
         Node firstNode = sentinel.next;
         sentinel.next = firstNode.next;
         firstNode.prev = sentinel;
@@ -74,18 +71,14 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     }
 
     public T removeLast() {
-        if (isEmpty())
+        if (isEmpty()) {
             return null;
+        }
         Node lastNode = sentinel.prev;
         sentinel.prev = lastNode.prev;
         lastNode.prev.next = sentinel;
         size--;
         return lastNode.item;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
     }
 
     public int size() {
@@ -106,8 +99,9 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 
 
     public T get(int i) {
-        if (isEmpty() || i >= size)
+        if (isEmpty() || i >= size) {
             return null;
+        }
         Node p = sentinel.next;
         while (i > 0) {
             p = p.next;
@@ -164,7 +158,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         }
 
         LinkedListDeque<?> lld1 = (LinkedListDeque<?>) o;
-        if (lld1.size() != this.size){
+        if (lld1.size() != this.size) {
             return false;
         }
         for (int i = 0; i < size; i++) {

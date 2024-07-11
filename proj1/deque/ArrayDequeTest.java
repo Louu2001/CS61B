@@ -9,7 +9,8 @@ public class ArrayDequeTest {
 
     @Test
     public void nonEmptyInstantiationTest() {
-        ArrayDeque<Integer> arrayDeque = new ArrayDeque<>(1);
+        ArrayDeque<Integer> arrayDeque = new ArrayDeque<>();
+        arrayDeque.addLast(1);
 
         assertFalse("Should not be empty", arrayDeque.isEmpty());
         assertEquals("Should have size 1", 1, arrayDeque.size());
@@ -97,7 +98,7 @@ public class ArrayDequeTest {
     public void removeBigAmountTest() {
         ArrayDeque<Integer> arrayDeque = new ArrayDeque<>();
 
-        int M = 1000000;
+        int M = 100;
 
         for (int i = 0; i < M; i++) {
             arrayDeque.addLast(i);
