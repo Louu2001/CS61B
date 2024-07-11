@@ -151,21 +151,3 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     }
 
 }
-//    public static void main(String[] args) {
-//        ArrayDeque<String> deque = new ArrayDeque<>();
-//
-//        deque.addFirst("A");
-//        deque.addLast("B");
-//        deque.addFirst("C");
-//        deque.addLast("D");
-//
-//        System.out.println("Deque after additions:");
-//        deque.printDeque(); // C A B D
-//        System.out.println(deque.get(2));
-//        deque.removeFirst();
-//        deque.removeLast();
-//
-//        System.out.println("Deque after removals:");
-//        deque.printDeque(); // A B
-//    }
-
