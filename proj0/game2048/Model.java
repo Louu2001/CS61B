@@ -162,17 +162,15 @@ public class Model extends Observable {
         boolean merged = false;
         int nextEmptyRow = board.size() - 1;
         int lastMergeRow = -1;
-        int subNextEmptyRow = board.size() - 1;
-        int subLastMergeRow = -1;
         int index = -1;
         int emptyIndex = -1;
-
         int targetRow = nextEmptyRow;
+
         for (int row = board.size() - 2; row >= 0; row--) {
+
             Tile tile = board.tile(col, row);
             if (tile == null)
                 continue;
-
 
             Tile aboveTile = board.tile(col, targetRow);
 
@@ -233,10 +231,7 @@ public class Model extends Observable {
                     }
                 }
             }
-
         }
-
-
         return changed;
     }
 
