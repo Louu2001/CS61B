@@ -9,7 +9,8 @@ import java.util.Set;
 public class BSTMap<K extends Comparable<K>,V> implements Map61B<K,V> {
 
     private BSTNode root;
-    private int size;
+    private int size=0;
+
     private class BSTNode{
         private K key;
         private V val;
@@ -23,9 +24,6 @@ public class BSTMap<K extends Comparable<K>,V> implements Map61B<K,V> {
 
     }
 
-    public BSTMap(){
-
-    }
 
 
     public void clear() {
@@ -39,15 +37,16 @@ public class BSTMap<K extends Comparable<K>,V> implements Map61B<K,V> {
     }
 
     private boolean containsKey(BSTNode x, K key) {
+        if(x==null){
+            return false;
+        }
         int cmp = key.compareTo(x.key);
         if (cmp<0){
-            containsKey(x.left,key);
+            return containsKey(x.left,key);
         } else if (cmp>0) {
-            containsKey(x.right,key);
-        }else {
-            return true;
+            return containsKey(x.right,key);
         }
-        return false;
+        return true;
     }
 
     public V get(K key) {
@@ -55,20 +54,19 @@ public class BSTMap<K extends Comparable<K>,V> implements Map61B<K,V> {
     }
 
     private V get(BSTNode x, K key) {
-        if (key == null){
+        if (key == null) {
             throw new IllegalArgumentException("calls get() with a null key");
         }
-        if (x==null){
+        if (x == null) {
             return null;
         }
         int cmp = key.compareTo(x.key);
-        if (cmp<0){
-            get(x.left,key);
-        } else if (cmp>0) {
-            get(x.right,key);
-        }else {
-            return x.val;
+        if (cmp < 0) {
+            return get(x.left, key);
+        } else if (cmp > 0) {
+            return get(x.right, key);
         }
+        return x.val;
     }
 
     public int size() {
@@ -84,19 +82,36 @@ public class BSTMap<K extends Comparable<K>,V> implements Map61B<K,V> {
         if (key == null) {
             throw new IllegalArgumentException("calls put() with a null key");
         }
+        if (x ==null){
+            return new BSTNode(key,value);
+        }
         int cmp = key.compareTo(x.key);
         if (cmp<0){
-            put(x.left,key,value);
+            x.left = put(x.left,key,value);
         } else if (cmp>0) {
-            put(x.right,key,value);
+            x.right = put(x.right,key,value);
         }else {
             x.val = value;
         }
         return x;
     }
 
+    public void printInOrder() {
+        printInOrder(root);
+    }
+
+    private void printInOrder(BSTNode x){
+        if (x == null) {
+            return;
+        }
+        printInOrder(x.left);
+        System.out.println(x.key.toString() + " -> " + x.val.toString());
+        printInOrder(x.right);
+    }
+
+
     public Set<K> keySet() {
-        return (V) new UnsupportedOperationException("keySet is not supported");
+        return (Set<K>) new UnsupportedOperationException("keySet is not supported");
     }
 
     public V remove(K key) {
