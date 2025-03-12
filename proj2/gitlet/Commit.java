@@ -18,8 +18,7 @@ import static gitlet.Utils.*;
  * @author Lou
  */
 
-public class Commit implements Serializable, Dumpable
-{
+public class Commit implements Serializable, Dumpable {
     /**
      * TODO: add instance variables here.
      * <p>
@@ -86,6 +85,7 @@ public class Commit implements Serializable, Dumpable
     // 获取格式化的时间字符串
     public String getFormattedTimestamp() {
         SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy Z", Locale.ENGLISH);
+        format.setTimeZone(TimeZone.getDefault()); // 设置时区为本地时区
         return format.format(timestamp);
     }
 
@@ -107,5 +107,15 @@ public class Commit implements Serializable, Dumpable
     // 获取该 commit 的父提交哈希值列表
     public List<String> getParentCommitIds() {
         return parentCommitIds;
+    }
+
+    // 获取提交的消息
+    public String getMessage() {
+        return logMessage;
+    }
+
+    // 获取提交的时间戳
+    public Date getTimestamp() {
+        return timestamp;
     }
 }

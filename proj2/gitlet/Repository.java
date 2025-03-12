@@ -2,6 +2,7 @@ package gitlet;
 
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static gitlet.Utils.*;
@@ -274,6 +275,87 @@ public class Repository {
         stage.save();
     }
 
-    /* * log command funtion */
+    /* * log command function */
+    public static void log() {
+        String currentCommitId = readCurrCommmitID();
 
+        // 遍历提交历史，沿着父提交链接向回查找
+        Commit currCommit = readCommitById(currentCommitId);
+
+        while (currCommit != null) {
+            printCommitInfo(currCommit);
+
+            // 移动到第一个父提交（如果存在）
+            List<String> parentIds = currCommit.getParentCommitIds();
+            if (parentIds.isEmpty()) {
+                break; // 没有父提交，说明到达了初始提交
+            }
+            // 获取第一个父提交（忽略合并的第二个父提交）
+            currCommit = readCommitById(parentIds.get(0));
+        }
+    }
+
+    // 根据提交 ID 读取提交对象
+    private static Commit readCommitById(String commitId) {
+        File commitFile = join(COMMITS_DIR, commitId);
+        return readObject(commitFile, Commit.class);
+    }
+
+    // 打印提交信息
+    private static void printCommitInfo(Commit commit) {
+        System.out.println("===");
+        System.out.println("commit " + commit.getCommitId());
+
+        Date commitDate = commit.getTimestamp();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy Z",Locale.ENGLISH);
+        String formattedDate = dateFormat.format(commitDate);
+        System.out.println("Date: " + formattedDate);
+
+        System.out.println(commit.getMessage());
+
+        // 如果是合并提交，打印父提交信息
+        List<String> parentIds = commit.getParentCommitIds();
+        if (parentIds.size() > 1) {
+            String firstParent = parentIds.get(0).substring(0, 7);
+            String secondParent = parentIds.get(1).substring(0, 7);
+            System.out.println("Merge: " + firstParent + " " + secondParent);
+        }
+
+        System.out.println();
+    }
+
+    /* * global-log command function */
+    public static void globalLog() {
+        File commitsDir = Repository.COMMITS_DIR;
+
+        for (File commitFile : commitsDir.listFiles()) {
+            Commit commit = readObject(commitFile, Commit.class);
+
+            System.out.println("===");  // 每个提交之间用 === 分隔
+            System.out.println("commit " + commit.getCommitId());
+            System.out.println("Date: " + commit.getFormattedTimestamp());
+            System.out.println(commit.getMessage());
+            System.out.println();
+        }
+    }
+
+    /* * find command function */
+    public static void findCommitByMessage(String message) {
+        File commitsDir = Repository.COMMITS_DIR;
+        boolean found = false;
+
+        for (File commitFile : commitsDir.listFiles()) {
+            Commit commit = readObject(commitFile, Commit.class);
+            if (commit.getMessage().equals(message)) {
+                System.out.println(commit.getCommitId());
+                found = true;
+            }
+        }
+
+        if (!found) {
+            System.out.println("Found no commit with that message.");
+        }
+    }
 }
+
+

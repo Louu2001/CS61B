@@ -42,8 +42,21 @@ public class Main {
                 break;
             /* * rm command */
             case "rm":
-                validateArgs(args,2);
+                validateArgs(args, 2);
                 Repository.rm(args[1]);
+                break;
+            /* * log command */
+            case "log":
+                validateArgs(args, 1);
+                Repository.log();
+                break;
+            case "global-log":
+                validateArgs(args,1);
+                Repository.globalLog();
+                break;
+            case "find":
+                validateArgs(args,2);
+                Repository.findCommitByMessage(args[1]);
                 break;
             // TODO: FILL THE REST IN
             default:

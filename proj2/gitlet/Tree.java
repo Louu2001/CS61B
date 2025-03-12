@@ -7,11 +7,22 @@ import java.io.File;
 
 import static gitlet.Utils.*;
 
-public class Tree implements Serializable {
+public class Tree implements Serializable, Dumpable {
     private final Map<String, String> fileTree; // 文件名 -> blobHash 或 treeHash（如果是目录）
 
     public Tree() {
         fileTree = new HashMap<>();
+    }
+
+    @Override
+    public void dump() {
+        System.out.println("=== Tree ===");
+        System.out.println("Tree ID: " + getId());
+        System.out.println("File Tree:");
+        for (Map.Entry<String, String> entry : fileTree.entrySet()) {
+            System.out.println("File: " + entry.getKey() + " -> " + entry.getValue());
+        }
+        System.out.println("============");
     }
 
     // 添加文件或子目录
