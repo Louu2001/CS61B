@@ -1,40 +1,52 @@
 package gitlet;
 
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.io.File;
 
+import static gitlet.Utils.*;
 
 public class Tree implements Serializable {
-    private static Map<String, String> fileTree; // fileName -> blobHash
+    private final Map<String, String> fileTree; // 文件名 -> blobHash 或 treeHash（如果是目录）
 
     public Tree() {
         fileTree = new HashMap<>();
     }
 
-    // 添加文件到树
-    public void addFile(String fileName, String blobHash) {
-        fileTree.put(fileName, blobHash);
+    // 添加文件或子目录
+    public void addEntry(String name, String hash) {
+        fileTree.put(name, hash);
     }
 
-    // 删除文件
-    public void removeFile(String fileName) {
-        fileTree.remove(fileName);
+    // 删除文件或子目录
+    public void removeEntry(String name) {
+        fileTree.remove(name);
     }
 
-    // 获取文件的 blobHash
-    public String getBlob(String fileName) {
-        return fileTree.get(fileName);
+    // 获取文件或目录的 Hash
+    public String getHash(String name) {
+        return fileTree.get(name);
     }
 
-    // 判断是否包含文件
-    public boolean containsFile(String fileName) {
-        return fileTree.containsKey(fileName);
+    // 判断是否包含文件或目录
+    public boolean containsEntry(String name) {
+        return fileTree.containsKey(name);
     }
 
-    // 获取所有文件映射
+    // 获取所有条目
     public Map<String, String> getFileTree() {
         return fileTree;
+    }
+
+    // 计算当前 Tree 的 ID（SHA-1）
+    public String getId() {
+        return sha1(fileTree.toString());
+    }
+
+    // 保存 Tree 到 .gitlet/objects/trees/
+    public void save() {
+        File treeFile = join(Repository.TREES_DIR, getId());
+        writeObject(treeFile, this);
     }
 }

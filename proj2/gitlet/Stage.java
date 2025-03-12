@@ -9,9 +9,15 @@ import java.util.Set;
 
 import static gitlet.Utils.*;
 
-public class Stage implements Serializable {
-    private Map<String, String> additionStage; // fileName -> blobHash
-    private Set<String> removalStage; // 记录删除的文件
+public class Stage implements Serializable, Dumpable {
+    private final Map<String, String> additionStage; // fileName -> blobHash
+    private final Set<String> removalStage; // 记录删除的文件
+
+    @Override
+    public void dump() {
+        System.out.println("Addition Stage: " + additionStage);
+        System.out.println("Removal Stage: " + removalStage);
+    }
 
     private static final File STAGE_FILE = join(Repository.GITLET_DIR, "staging_area", "stage");
 

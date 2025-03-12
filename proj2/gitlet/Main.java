@@ -22,14 +22,30 @@ public class Main {
         switch (firstArg) {
             case "init":
                 // TODO: handle the `init` command
-                validateArgs(args,1);
+                validateArgs(args, 1);
                 Repository.init();
                 break;
             case "add":
                 // TODO: handle the `add [filename]` command
+                validateArgs(args, 2);
+                Repository.add(args[1]);
+                break;
+            /* * commit command */
+            case "commit":
+                if (args.length < 2 || args[1].trim().isEmpty()) {
+                    System.out.println("Please enter a commit message.");
+                    System.exit(0);
+                }
+                validateArgs(args, 2);
+
+                Repository.commit(args[1]);
+                break;
+            /* * rm command */
+            case "rm":
+                validateArgs(args,2);
+                Repository.rm(args[1]);
                 break;
             // TODO: FILL THE REST IN
-
             default:
                 System.out.println("No command with that name exists.");
                 System.exit(0);

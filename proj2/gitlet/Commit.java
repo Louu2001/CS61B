@@ -5,10 +5,7 @@ package gitlet;
 import java.io.File;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date; // TODO: You'll likely use this in this class
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import static gitlet.Repository.COMMITS_DIR;
 import static gitlet.Utils.*;
@@ -21,7 +18,8 @@ import static gitlet.Utils.*;
  * @author Lou
  */
 
-public class Commit implements Serializable {
+public class Commit implements Serializable, Dumpable
+{
     /**
      * TODO: add instance variables here.
      * <p>
@@ -42,13 +40,29 @@ public class Commit implements Serializable {
     // 树对象的哈希值（存储文件结构）
     private String treeId;
 
+    // 存储文件名到 Blob 哈希值的映射
+    private Map<String, String> trackedFiles;
+
+    // **实现 Dumpable 接口的方法**
+    @Override
+    public void dump() {
+        System.out.println("=== Commit ===");
+        System.out.println("Commit ID: " + getCommitId());
+        System.out.println("Message: " + logMessage);
+        System.out.println("Timestamp: " + getFormattedTimestamp());
+        System.out.println("Parent Commits: " + parentCommitIds);
+        System.out.println("Tracked Files: " + trackedFiles);
+        System.out.println("=================");
+    }
+
 
     /* TODO: fill in the rest of this class. */
-    public Commit(String logMessage, String treeId, List<String> parentCommitIds) {
+    public Commit(String logMessage, String treeId, List<String> parentCommitIds, Map<String, String> trackedFiles) {
         this.logMessage = logMessage;
         this.treeId = (treeId != null) ? treeId : "";  // 避免 treeId 为空指针
         this.parentCommitIds = (parentCommitIds != null) ? parentCommitIds : new ArrayList<>();
         this.timestamp = this.parentCommitIds.isEmpty() ? new Date(0) : new Date();  // 只在空 parent 时设定特殊时间
+        this.trackedFiles = (trackedFiles != null) ? trackedFiles : new java.util.HashMap<>();
     }
 
 
@@ -73,5 +87,25 @@ public class Commit implements Serializable {
     public String getFormattedTimestamp() {
         SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy Z", Locale.ENGLISH);
         return format.format(timestamp);
+    }
+
+    // 获取某个文件的 Blob 哈希值
+    public String getBlobHash(String fileName) {
+        return trackedFiles.get(fileName);  // 如果文件在该 commit 中，则返回其 Blob 哈希值
+    }
+
+    // 向 commit 中添加文件
+    public void addFile(String fileName, String blobHash) {
+        trackedFiles.put(fileName, blobHash);
+    }
+
+    // 获取所有被跟踪的文件及其 Blob 哈希值
+    public Map<String, String> getTrackedFiles() {
+        return trackedFiles;
+    }
+
+    // 获取该 commit 的父提交哈希值列表
+    public List<String> getParentCommitIds() {
+        return parentCommitIds;
     }
 }
